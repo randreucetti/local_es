@@ -7,18 +7,20 @@ marvel:
 
 elasticsearch_master:
     image: es_local
-    command: "elasticsearch -Des.node.name=master -Des.cluster.name=elasticsearch_local -Des.node.master=true -Des.node.data=false -Des.marvel.agent.exporter.es.hosts=marvel"
+    command: "elasticsearch -Des.node.name=data1 -Des.cluster.name=elasticsearch_local -Des.node.master=true -Des.marvel.agent.exporter.es.hosts=marvel"
     environment:
       - ES_HEAP_SIZE=512m
     links:
       - marvel
+    volumes:
+      - "/opt/elasticsearch/data"
     ports:
       - "9200:9200"
       - "9300:9300"
 
 elasticsearch_data_1:
     image: es_local
-    command: "elasticsearch -Des.node.name=data1 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.node.data=true -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master -Des.marvel.agent.exporter.es.hosts=marvel"
+    command: "elasticsearch -Des.node.name=data2 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master -Des.marvel.agent.exporter.es.hosts=marvel"
     links:
       - elasticsearch_master
       - marvel
@@ -29,7 +31,7 @@ elasticsearch_data_1:
 
 elasticsearch_data_2:
     image: es_local
-    command: "elasticsearch -Des.node.name=data2 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.node.data=true -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master -Des.marvel.agent.exporter.es.hosts=marvel"
+    command: "elasticsearch -Des.node.name=data3 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master -Des.marvel.agent.exporter.es.hosts=marvel"
     links:
       - elasticsearch_master
       - marvel
@@ -40,7 +42,7 @@ elasticsearch_data_2:
 
 elasticsearch_agg_1:
     image: es_local
-    command: "elasticsearch -Des.node.name=agg1 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.node.data=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master -Des.marvel.agent.exporter.es.hosts=marvel"
+    command: "elasticsearch -Des.node.name=data4 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master -Des.marvel.agent.exporter.es.hosts=marvel"
     links:
       - elasticsearch_master
       - marvel
@@ -51,7 +53,7 @@ elasticsearch_agg_1:
 
 elasticsearch_agg_2:
     image: es_local
-    command: "elasticsearch -Des.node.name=agg2 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.node.data=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master -Des.marvel.agent.exporter.es.hosts=marvel"
+    command: "elasticsearch -Des.node.name=data5 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master -Des.marvel.agent.exporter.es.hosts=marvel"
     links:
       - elasticsearch_master
       - marvel
