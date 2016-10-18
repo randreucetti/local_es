@@ -5,59 +5,61 @@ marvel:
       - "19200:9200"
       - "19300:9300"
 
-elasticsearch_master:
+elasticsearch_master_1:
     image: es_local
-    command: "elasticsearch -Des.node.name=data1 -Des.cluster.name=elasticsearch_local -Des.node.master=true -Des.marvel.agent.exporter.es.hosts=marvel"
+    command: "elasticsearch -Des.node.name=data1 -Des.cluster.name=elasticsearch_local -Des.node.master=true -Des.marvel.agent.exporter.es.hosts=marvel -Des.script.disable_dynamic=false"
     environment:
       - ES_HEAP_SIZE=512m
+      - JAVA_OPTS=-Dcom.sun.management.jmxremote.port=1096 -Dcom.sun.management.jmxremote.rmi.port=1096 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
     links:
       - marvel
     volumes:
-      - "/opt/elasticsearch/data"
+      - "/mnt/xvdb1/elasticsearch/data1:/usr/share/elasticsearch/data"
     ports:
       - "9200:9200"
       - "9300:9300"
-
-elasticsearch_data_1:
-    image: es_local
-    command: "elasticsearch -Des.node.name=data2 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master -Des.marvel.agent.exporter.es.hosts=marvel"
-    links:
-      - elasticsearch_master
-      - marvel
-    volumes:
-      - "/opt/elasticsearch/data"
-    environment:
-       - ES_HEAP_SIZE=512m
+      - "1096:1096"
 
 elasticsearch_data_2:
     image: es_local
-    command: "elasticsearch -Des.node.name=data3 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master -Des.marvel.agent.exporter.es.hosts=marvel"
+    command: "elasticsearch -Des.node.name=data2 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master_1 -Des.marvel.agent.exporter.es.hosts=marvel -Des.script.disable_dynamic=false"
     links:
-      - elasticsearch_master
+      - elasticsearch_master_1
       - marvel
     volumes:
-      - "/opt/elasticsearch/data"
+      - "/mnt/xvdb1/elasticsearch/data2:/usr/share/elasticsearch/data"
     environment:
        - ES_HEAP_SIZE=512m
 
-elasticsearch_agg_1:
+elasticsearch_data_3:
     image: es_local
-    command: "elasticsearch -Des.node.name=data4 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master -Des.marvel.agent.exporter.es.hosts=marvel"
+    command: "elasticsearch -Des.node.name=data3 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master_1 -Des.marvel.agent.exporter.es.hosts=marvel -Des.script.disable_dynamic=false"
     links:
-      - elasticsearch_master
+      - elasticsearch_master_1
       - marvel
     volumes:
-      - "/opt/elasticsearch/data"
+      - "/mnt/xvdb1/elasticsearch/data3:/usr/share/elasticsearch/data"
     environment:
        - ES_HEAP_SIZE=512m
 
-elasticsearch_agg_2:
+elasticsearch_data_4:
     image: es_local
-    command: "elasticsearch -Des.node.name=data5 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master -Des.marvel.agent.exporter.es.hosts=marvel"
+    command: "elasticsearch -Des.node.name=data4 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master_1 -Des.marvel.agent.exporter.es.hosts=marvel -Des.script.disable_dynamic=false"
     links:
-      - elasticsearch_master
+      - elasticsearch_master_1
       - marvel
     volumes:
-      - "/opt/elasticsearch/data"
+      - "/mnt/xvdb1/elasticsearch/data4:/usr/share/elasticsearch/data"
+    environment:
+       - ES_HEAP_SIZE=512m
+
+elasticsearch_data_5:
+    image: es_local
+    command: "elasticsearch -Des.node.name=data5 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master_1 -Des.marvel.agent.exporter.es.hosts=marvel -Des.script.disable_dynamic=false"
+    links:
+      - elasticsearch_master_1
+      - marvel
+    volumes:
+      - "/mnt/xvdb1/elasticsearch/data5:/usr/share/elasticsearch/data"
     environment:
        - ES_HEAP_SIZE=512m
