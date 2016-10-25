@@ -1,0 +1,5 @@
+#script.engine.groovy.inline.aggs: on
+marvel.agent.exporters:
+  id1:
+    type: http
+    host: ["http://es-mon-1:9200"]

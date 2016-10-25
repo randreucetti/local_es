@@ -1,19 +1,34 @@
-marvel:
-    image: es_local
-    command: "elasticsearch -Des.cluster.name=marvel_local -Des.node.name=marvel -Des.marvel.agent.enabled=false"
+es-mon-1:
+    image: elasticsearch:2.4.1
+    command: "elasticsearch -Des.node.name=es-mon-1 -Des.cluster.name=elasticsearch_mon_local -Des.network.host=0.0.0.0 -Des.node.master=true"
+    environment:
+      - ES_HEAP_SIZE=512m
+    volumes:
+      - "/mnt/xvdb1/elasticsearch/data-mon1:/usr/share/elasticsearch/data"
+    ports:
+      - "29200:9200"
+      - "29300:9300"
+kibana:
+    build: kibana/
+    links:
+      - es-mon-1
+      - elasticsearch_master_1
+    volumes:
+      - ./kibana/config/:/opt/kibana/config/
     ports:
       - "19200:9200"
       - "19300:9300"
-
+      - "5601:5601"
 elasticsearch_master_1:
-    image: es_local
-    command: "elasticsearch -Des.node.name=data1 -Des.cluster.name=elasticsearch_local -Des.node.master=true -Des.marvel.agent.exporter.es.hosts=marvel -Des.script.disable_dynamic=false"
+    build: elasticsearch/
+    command: "elasticsearch -Des.node.name=data1 -Des.cluster.name=elasticsearch_local -Des.node.master=true -Des.network.host=0.0.0.0"
     environment:
       - ES_HEAP_SIZE=512m
       - JAVA_OPTS=-Dcom.sun.management.jmxremote.port=1096 -Dcom.sun.management.jmxremote.rmi.port=1096 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
     links:
-      - marvel
+      - es-mon-1
     volumes:
+      - ./elasticsearch/config/:/usr/share/elasticsearch/config/
       - "/mnt/xvdb1/elasticsearch/data1:/usr/share/elasticsearch/data"
     ports:
       - "9200:9200"
@@ -21,45 +36,49 @@ elasticsearch_master_1:
       - "1096:1096"
 
 elasticsearch_data_2:
-    image: es_local
-    command: "elasticsearch -Des.node.name=data2 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master_1 -Des.marvel.agent.exporter.es.hosts=marvel -Des.script.disable_dynamic=false"
+    build: elasticsearch/
+    command: "elasticsearch -Des.node.name=data2 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.network.host=0.0.0.0 -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master_1"
     links:
       - elasticsearch_master_1
-      - marvel
+      - es-mon-1
     volumes:
+      - ./elasticsearch/config/:/usr/share/elasticsearch/config/
       - "/mnt/xvdb1/elasticsearch/data2:/usr/share/elasticsearch/data"
     environment:
        - ES_HEAP_SIZE=512m
 
 elasticsearch_data_3:
-    image: es_local
-    command: "elasticsearch -Des.node.name=data3 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master_1 -Des.marvel.agent.exporter.es.hosts=marvel -Des.script.disable_dynamic=false"
+    build: elasticsearch/
+    command: "elasticsearch -Des.node.name=data3 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.network.host=0.0.0.0 -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master_1"
     links:
       - elasticsearch_master_1
-      - marvel
+      - es-mon-1
     volumes:
+      - ./elasticsearch/config/:/usr/share/elasticsearch/config/
       - "/mnt/xvdb1/elasticsearch/data3:/usr/share/elasticsearch/data"
     environment:
        - ES_HEAP_SIZE=512m
 
 elasticsearch_data_4:
-    image: es_local
-    command: "elasticsearch -Des.node.name=data4 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master_1 -Des.marvel.agent.exporter.es.hosts=marvel -Des.script.disable_dynamic=false"
+    build: elasticsearch/
+    command: "elasticsearch -Des.node.name=data4 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.network.host=0.0.0.0 -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master_1"
     links:
       - elasticsearch_master_1
-      - marvel
+      - es-mon-1
     volumes:
+      - ./elasticsearch/config/:/usr/share/elasticsearch/config/
       - "/mnt/xvdb1/elasticsearch/data4:/usr/share/elasticsearch/data"
     environment:
        - ES_HEAP_SIZE=512m
 
 elasticsearch_data_5:
-    image: es_local
-    command: "elasticsearch -Des.node.name=data5 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master_1 -Des.marvel.agent.exporter.es.hosts=marvel -Des.script.disable_dynamic=false"
+    build: elasticsearch/
+    command: "elasticsearch -Des.node.name=data5 -Des.cluster.name=elasticsearch_local -Des.node.master=false -Des.network.host=0.0.0.0 -Des.discovery.zen.ping.unicast.hosts=elasticsearch_master_1"
     links:
       - elasticsearch_master_1
-      - marvel
+      - es-mon-1
     volumes:
+      - ./elasticsearch/config/:/usr/share/elasticsearch/config/
       - "/mnt/xvdb1/elasticsearch/data5:/usr/share/elasticsearch/data"
     environment:
        - ES_HEAP_SIZE=512m
