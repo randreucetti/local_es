@@ -1,4 +1,6 @@
-#script.engine.groovy.inline.aggs: on
+script.engine.groovy.inline.aggs: on
+script.engine.groovy.inline.update: on
+script.engine.groovy.inline.search: on
 marvel.agent.exporters:
   id1:
     type: http
